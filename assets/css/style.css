@@ -6,15 +6,16 @@
     --bg-primary: #f0f0f5;
     --bg-secondary: #ffffff;
     --bg-card: #fafafa;
-    --bg-glass: rgba(255, 255, 255, 0.7);
-    --border-glass: rgba(0, 0, 0, 0.08);
+    --bg-glass: rgba(255, 255, 255, 0.8);
+    --border-glass: rgba(0, 0, 0, 0.1);
     --text-primary: #1a1a2e;
     --text-secondary: #4a4a5e;
     --text-muted: #8a8a9e;
     --accent-primary: #7c3aed;
     --accent-secondary: #06b6d4;
     --accent-gradient: linear-gradient(135deg, #7c3aed, #06b6d4);
-    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.08);
     --radius: 16px;
     --radius-sm: 12px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -37,18 +38,23 @@
     --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     
     --empty-icon: #c0c0d0;
+    --status-waiting: #b45309;
+    --status-playing: #166534;
+    --status-waiting-bg: rgba(234, 179, 8, 0.15);
+    --status-playing-bg: rgba(34, 197, 94, 0.15);
 }
 
 [data-theme="dark"] {
     --bg-primary: #0a0a0f;
     --bg-secondary: #13131f;
     --bg-card: #1a1a2e;
-    --bg-glass: rgba(255, 255, 255, 0.05);
-    --border-glass: rgba(255, 255, 255, 0.08);
+    --bg-glass: rgba(255, 255, 255, 0.08);
+    --border-glass: rgba(255, 255, 255, 0.1);
     --text-primary: #f0f0f5;
     --text-secondary: #a0a0b8;
     --text-muted: #6a6a8a;
     --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.2);
     --bg-layer-1: radial-gradient(ellipse at center, #1a1a3e, #0a0a0f);
     --bg-layer-flag-opacity: 0.06;
     --bg-card-item-opacity: 0.15;
@@ -60,6 +66,10 @@
     --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     
     --empty-icon: #4a4a6a;
+    --status-waiting: #eab308;
+    --status-playing: #22c55e;
+    --status-waiting-bg: rgba(234, 179, 8, 0.2);
+    --status-playing-bg: rgba(34, 197, 94, 0.2);
 }
 
 /* ============================================
@@ -225,7 +235,7 @@ body {
 }
 
 .glass:hover {
-    border-color: rgba(124, 58, 237, 0.2);
+    border-color: rgba(124, 58, 237, 0.25);
 }
 
 .glass-dark {
@@ -303,7 +313,7 @@ body {
 .flag-header {
     width: 40px;
     height: 26px;
-    border-radius: 3px;
+    border-radius: 4px;
     flex-shrink: 0;
     border: 1px solid var(--border-glass);
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
@@ -356,14 +366,17 @@ header .logo-sub {
 }
 
 /* ============================================
-   STATS BAR (UNIQUE)
+   STATS BAR
    ============================================ */
 
 .stats-bar {
     border-color: rgba(124, 58, 237, 0.15);
-    padding: 8px 12px;
+    padding: 10px 14px;
     margin: 6px 16px 0;
     border-radius: var(--radius-sm);
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
 }
 
 .stats-bar .stat-item {
@@ -372,28 +385,28 @@ header .logo-sub {
 }
 
 .stats-bar .stat-icon {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     display: block;
 }
 
 .stats-bar .stat-value {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
 .stats-bar .stat-label {
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     color: var(--text-secondary);
-    opacity: 0.6;
+    opacity: 0.7;
     letter-spacing: 0.04em;
 }
 
 .stats-bar .stat-divider {
     width: 1px;
-    height: 30px;
+    height: 35px;
     background: var(--border-glass);
     flex-shrink: 0;
 }
@@ -403,8 +416,8 @@ header .logo-sub {
    ============================================ */
 
 .theme-toggle {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: var(--bg-glass);
     border: 1px solid var(--border-glass);
@@ -420,6 +433,7 @@ header .logo-sub {
 .theme-toggle:hover {
     transform: scale(1.1);
     border-color: var(--accent-primary);
+    background: var(--bg-card);
 }
 
 /* ============================================
@@ -427,8 +441,8 @@ header .logo-sub {
    ============================================ */
 
 .user-avatar {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: var(--accent-gradient);
     display: flex;
@@ -436,9 +450,10 @@ header .logo-sub {
     justify-content: center;
     color: white;
     font-weight: 700;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     flex-shrink: 0;
     transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
 }
 
 .user-avatar:hover {
@@ -450,15 +465,15 @@ header .logo-sub {
    ============================================ */
 
 .hero-banner {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(6, 182, 212, 0.08));
-    border: 1px solid rgba(124, 58, 237, 0.1);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(6, 182, 212, 0.1));
+    border: 1px solid rgba(124, 58, 237, 0.15);
     padding: 14px 18px;
     border-radius: var(--radius);
     margin-bottom: 20px;
 }
 
 .hero-banner .title {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-primary);
 }
@@ -476,23 +491,26 @@ header .logo-sub {
     display: inline-block;
     width: 68px;
     height: 95px;
-    margin: 3px;
+    margin: 4px;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-radius: 8px;
     box-shadow: var(--card-shadow);
     position: relative;
+    background: var(--card-bg);
+    border: 2px solid transparent;
 }
 
 .card-wrapper:hover {
     transform: translateY(-8px);
-    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.25);
     z-index: 10;
+    border-color: var(--accent-primary);
 }
 
 .card-wrapper.selected {
     transform: translateY(-16px) scale(1.04);
-    box-shadow: 0 12px 35px rgba(124, 58, 237, 0.25);
+    box-shadow: 0 12px 35px rgba(124, 58, 237, 0.3);
     z-index: 20;
     border: 2px solid var(--accent-primary);
 }
@@ -500,7 +518,7 @@ header .logo-sub {
 .card-img {
     width: 100%;
     height: 100%;
-    border-radius: 8px;
+    border-radius: 6px;
     object-fit: cover;
     display: block;
     background: var(--card-bg);
@@ -514,38 +532,54 @@ header .logo-sub {
     background: var(--accent-gradient);
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border-radius: var(--radius-sm);
     font-weight: 600;
     font-size: 0.85rem;
     transition: var(--transition);
     cursor: pointer;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
 }
 
 .btn-primary:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+    transform: scale(1.03);
+    box-shadow: 0 6px 24px rgba(124, 58, 237, 0.35);
 }
 
 .btn-primary:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
+}
+
+.btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .btn-secondary {
     background: var(--bg-glass);
     color: var(--text-primary);
-    border: 1px solid var(--border-glass);
-    padding: 10px 20px;
+    border: 1.5px solid var(--border-glass);
+    padding: 12px 20px;
     border-radius: var(--radius-sm);
     font-weight: 600;
     font-size: 0.85rem;
     transition: var(--transition);
     cursor: pointer;
+    backdrop-filter: blur(10px);
 }
 
 .btn-secondary:hover {
     background: var(--bg-card);
     border-color: var(--accent-primary);
+    transform: scale(1.03);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
 }
 
 /* ============================================
@@ -557,9 +591,9 @@ header .logo-sub {
     color: var(--text-primary);
     border: 1.5px solid var(--border-glass);
     border-radius: var(--radius-sm);
-    padding: 10px 14px;
+    padding: 12px 16px;
     transition: var(--transition);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     width: 100%;
     outline: none;
 }
@@ -572,6 +606,66 @@ header .logo-sub {
 .input-modern::placeholder {
     color: var(--text-secondary);
     opacity: 0.5;
+}
+
+/* ============================================
+   GAME CARD (joueurs)
+   ============================================ */
+
+.game-player-card {
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    background: var(--bg-glass);
+    border: 2px solid var(--border-glass);
+    text-align: center;
+    min-width: 70px;
+    flex-shrink: 0;
+}
+
+.game-player-card.active {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.game-player-card.winner {
+    border-color: #eab308;
+    box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
+}
+
+.game-player-card .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0 auto 6px;
+}
+
+.game-player-card .name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+}
+
+.game-player-card .card-count {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+.game-player-card .badge-winner {
+    font-size: 0.6rem;
+    color: #eab308;
+    font-weight: 700;
 }
 
 /* ============================================
@@ -620,52 +714,44 @@ header .logo-sub {
 }
 
 .game-card .game-status.waiting {
-    background: rgba(234, 179, 8, 0.15);
-    color: #b45309;
+    background: var(--status-waiting-bg);
+    color: var(--status-waiting);
 }
 
 .game-card .game-status.playing {
-    background: rgba(34, 197, 94, 0.15);
-    color: #166534;
-}
-
-[data-theme="dark"] .game-card .game-status.waiting {
-    color: #eab308;
-    background: rgba(234, 179, 8, 0.2);
-}
-
-[data-theme="dark"] .game-card .game-status.playing {
-    color: #22c55e;
-    background: rgba(34, 197, 94, 0.2);
+    background: var(--status-playing-bg);
+    color: var(--status-playing);
 }
 
 /* ============================================
-   STAT CARDS (pour la page profil)
+   STAT CARDS
    ============================================ */
 
 .stat-card {
     background: var(--bg-card);
     border-radius: 12px;
-    padding: 12px;
+    padding: 14px;
     text-align: center;
     border: 1px solid var(--border-glass);
     transition: var(--transition);
+    box-shadow: var(--shadow-card);
 }
 
 .stat-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     border-color: var(--accent-primary);
+    box-shadow: 0 8px 30px rgba(124, 58, 237, 0.12);
 }
 
 .stat-card .stat-icon {
-    font-size: 24px;
+    font-size: 26px;
     display: block;
     margin-bottom: 4px;
 }
 
 .stat-card .stat-value {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 700;
     color: var(--text-primary);
 }
 
@@ -687,14 +773,14 @@ header .logo-sub {
 }
 
 .empty-state .icon {
-    font-size: 3rem;
+    font-size: 3.5rem;
     display: block;
     margin-bottom: 12px;
     opacity: 0.5;
 }
 
 .empty-state .text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-secondary);
 }
 
@@ -704,7 +790,7 @@ header .logo-sub {
 
 .badge {
     display: inline-block;
-    padding: 2px 10px;
+    padding: 3px 12px;
     border-radius: 20px;
     font-size: 0.65rem;
     font-weight: 600;
@@ -713,25 +799,17 @@ header .logo-sub {
 }
 
 .badge-warning {
-    background: rgba(234, 179, 8, 0.2);
-    color: #92400e;
-}
-
-[data-theme="dark"] .badge-warning {
-    color: #eab308;
+    background: var(--status-waiting-bg);
+    color: var(--status-waiting);
 }
 
 .badge-success {
-    background: rgba(34, 197, 94, 0.2);
-    color: #166534;
-}
-
-[data-theme="dark"] .badge-success {
-    color: #22c55e;
+    background: var(--status-playing-bg);
+    color: var(--status-playing);
 }
 
 .badge-info {
-    background: rgba(6, 182, 212, 0.2);
+    background: rgba(6, 182, 212, 0.15);
     color: #0e7490;
 }
 
@@ -740,7 +818,7 @@ header .logo-sub {
 }
 
 .badge-danger {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.15);
     color: #991b1b;
 }
 
@@ -766,17 +844,19 @@ nav {
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid var(--border-glass);
+    padding: 4px 0 env(safe-area-inset-bottom, 0px);
 }
 
 nav a {
     transition: var(--transition);
-    padding: 4px 12px;
+    padding: 6px 14px;
     border-radius: 8px;
     text-decoration: none;
     color: var(--text-secondary);
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-weight: 500;
 }
 
 nav a:hover {
@@ -789,15 +869,15 @@ nav a.active {
 }
 
 nav a svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     stroke: currentColor;
 }
 
 nav a span {
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     margin-top: 2px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* ============================================
@@ -814,7 +894,7 @@ nav a span {
    ============================================ */
 
 .section-title {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: var(--text-primary);
     display: flex;
@@ -825,39 +905,6 @@ nav a span {
 .section-count {
     font-size: 0.7rem;
     color: var(--text-secondary);
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
-@media (max-width: 480px) {
-    .flag-header { width: 30px; height: 20px; }
-    .flag-banner { width: 55px; height: 37px; }
-    .card-wrapper { width: 55px; height: 77px; margin: 2px; }
-    .stats-bar .stat-icon { font-size: 0.9rem; }
-    .stats-bar .stat-value { font-size: 0.65rem; }
-    .stats-bar .stat-label { font-size: 0.5rem; }
-    .app-container .bg-layer-flag {
-        width: 250px;
-        height: 167px;
-        transform: translate(-50%, -50%) rotate(-15deg) scale(1.2);
-    }
-    .bg-card-item { width: 45px; height: 63px; font-size: 16px; }
-    .bg-card-item .suit { font-size: 18px; }
-    .bg-card-item .value-top,
-    .bg-card-item .value-bottom { font-size: 10px; }
-    .btn-primary, .btn-secondary { padding: 8px 14px; font-size: 0.75rem; }
-    .game-card { padding: 10px 12px; }
-    .game-card .game-code { font-size: 0.75rem; }
-    .game-card .game-details { font-size: 0.6rem; }
-}
-
-@media (max-width: 380px) {
-    .card-wrapper { width: 44px; height: 62px; }
-    .theme-toggle { width: 30px; height: 30px; font-size: 14px; }
-    .user-avatar { width: 28px; height: 28px; font-size: 0.6rem; }
-    .stats-bar .stat-value { font-size: 0.55rem; }
 }
 
 /* ============================================
@@ -881,6 +928,100 @@ nav a span {
 
 #gameMessage {
     transition: var(--transition);
+    font-weight: 500;
+}
+
+/* ============================================
+   STATUT JEU
+   ============================================ */
+
+.game-status-bar {
+    background: var(--bg-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.game-status-bar .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.game-status-bar .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.game-status-bar .status-dot.waiting {
+    background: #eab308;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.game-status-bar .status-dot.playing {
+    background: #22c55e;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.game-status-bar .status-dot.finished {
+    background: #3b82f6;
+}
+
+.game-status-bar .status-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.game-status-bar .player-count {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.game-status-bar .player-count strong {
+    color: var(--text-primary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 480px) {
+    .flag-header { width: 30px; height: 20px; }
+    .flag-banner { width: 55px; height: 37px; }
+    .card-wrapper { width: 55px; height: 77px; margin: 2px; }
+    .stats-bar .stat-icon { font-size: 1rem; }
+    .stats-bar .stat-value { font-size: 0.75rem; }
+    .stats-bar .stat-label { font-size: 0.5rem; }
+    .app-container .bg-layer-flag {
+        width: 250px;
+        height: 167px;
+        transform: translate(-50%, -50%) rotate(-15deg) scale(1.2);
+    }
+    .bg-card-item { width: 45px; height: 63px; font-size: 16px; }
+    .bg-card-item .suit { font-size: 18px; }
+    .bg-card-item .value-top,
+    .bg-card-item .value-bottom { font-size: 10px; }
+    .btn-primary, .btn-secondary { padding: 10px 14px; font-size: 0.75rem; }
+    .game-card { padding: 10px 12px; }
+    .game-card .game-code { font-size: 0.75rem; }
+    .game-card .game-details { font-size: 0.6rem; }
+    .game-player-card { min-width: 60px; padding: 8px 10px; }
+    .game-player-card .avatar { width: 32px; height: 32px; font-size: 0.8rem; }
+    .game-player-card .name { font-size: 0.6rem; max-width: 50px; }
+}
+
+@media (max-width: 380px) {
+    .card-wrapper { width: 44px; height: 62px; }
+    .theme-toggle { width: 32px; height: 32px; font-size: 14px; }
+    .user-avatar { width: 28px; height: 28px; font-size: 0.6rem; }
+    .stats-bar .stat-value { font-size: 0.65rem; }
 }
 
 /* ============================================
