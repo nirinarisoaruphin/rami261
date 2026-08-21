@@ -1,0 +1,16 @@
+Algorithme du tour:
+TANT QUE personne n'a gagné
+Joueur actuel
+Choisir: 
+1. Piocher dans la pioche
+OU
+2. Prendre la dernière carte défaussée
+Poser des combinaisons si désiré
+Défausser exactement une carte
+Vérifier:
+Toutes les cartes sont-elles posées?
+OUI 
+Le joueur gagne.
+NON
+Passer au joueur suivant.
+FIN TANT QUE 

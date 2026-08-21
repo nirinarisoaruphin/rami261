@@ -1,0 +1,518 @@
+Oui. À partir de ton écran de table, on peut définir le moteur complet de la partie RAMI 261, depuis l'arrivée des joueurs jusqu'à la fin de la partie et la déconnexion.
+L'idée la plus importante est celle-ci : le serveur doit être l'arbitre. Le téléphone ne décide jamais à lui seul si une carte est valide, si c'est le tour du joueur ou qui a gagné.
+
+1. État général de la table
+Le serveur conserve un objet GAME_STATE :
+GAME_STATE
+│
+├── roomId
+├── gameId
+├── status
+│   ├── WAITING
+│   ├── STARTING
+│   ├── PLAYING
+│   ├── FINISHED
+│   └── CLOSED
+│
+├── players[2..5]
+│   ├── id
+│   ├── seat
+│   ├── connected
+│   ├── balance
+│   ├── hand[]
+│   ├── hasDrawn
+│   ├── timeRemaining
+│   └── disconnectedAt
+│
+├── deck[]
+├── discardPile[]
+├── currentPlayer
+├── previousWinner
+├── turnNumber
+├── winner
+├── winType
+├── jackpot/bonus
+└── timer
+
+2. ARRIVÉE DANS LA SALLE
+Exemple :
+Salle Bronze
+Mise : 1 000 Ar
+Joueurs : 4/5
+Le joueur appuie sur JOUER.
+Le serveur fait :
+1. Vérifier le compte
+2. Vérifier que le joueur est autorisé à jouer
+3. Vérifier son solde
+4. Vérifier que la salle n'est pas pleine
+5. Réserver sa place
+6. Réserver la mise selon les règles légales du système
+7. Envoyer sa position à tous les joueurs
+Puis :
+Joueur 1 → siège 1
+Joueur 2 → siège 2
+Joueur 3 → siège 3
+Joueur 4 → siège 4
+
+3. DÉMARRAGE DE LA PARTIE
+Quand la partie peut commencer :
+WAITING
+   ↓
+STARTING
+   ↓
+Mélange des cartes
+   ↓
+Distribution
+   ↓
+PLAYING
+Paquet
+Ton RAMI 261 utilise :
+2 × 52 cartes = 104 cartes
+4 jokers
+----------------
+108 cartes
+Donc ton serveur doit créer 108 cartes au total.
+Sur ton image, le compteur affiche « 52 cartes » : c'est simplement le nombre restant dans la pioche à cet instant. Le paquet initial doit bien être de 108 cartes si on applique tes règles.
+
+4. DISTRIBUTION
+Tu as défini une règle importante :
+distribution obligatoirement dans le sens des aiguilles d'une montre.
+Et :
+le gagnant de la dernière partie commence la nouvelle partie.
+Donc :
+Gagnant précédent
+       ↓
+    siège 1
+       ↓
+    siège 2
+       ↓
+    siège 3
+       ↓
+    siège 4
+       ↓
+    siège 5
+Chaque joueur reçoit 13 cartes.
+Le serveur fait :
+for carte = 1 → 13
+    joueur 1 reçoit 1 carte
+    joueur 2 reçoit 1 carte
+    joueur 3 reçoit 1 carte
+    joueur 4 reçoit 1 carte
+    joueur 5 reçoit 1 carte
+fin
+Puis :
+currentPlayer = gagnant précédent
+
+5. CONTRÔLE TRI-JOKERS / QUADRI-JOKERS
+Avant que le premier joueur pioche, le serveur examine les 13 cartes de chaque joueur.
+3 jokers
+JOKER + JOKER + JOKER
+→ victoire immédiate selon ta règle.
+4 jokers
+JOKER + JOKER + JOKER + JOKER
+→ victoire immédiate
+et :
+bonus = bonus de la salle
+Très important :
+le serveur doit effectuer cette vérification, pas Flutter.
+
+6. DÉBUT DU TOUR
+Supposons :
+Raja261 = joueur qui commence
+Le serveur envoie :
+CURRENT_PLAYER = Raja261
+TIMER = 30 secondes
+Sur ton écran :
+┌─────────────────┐
+│    TON TOUR     │
+│       30        │
+│    secondes     │
+└─────────────────┘
+Les autres joueurs voient :
+En attente de Raja261
+
+7. PREMIER JOUEUR : PIOCHE
+Le joueur doit d'abord tirer une carte.
+Il a deux possibilités selon la règle de la partie :
+PIoche
+     │
+     ├── prendre dans la pioche
+     │
+     └── prendre la dernière carte défaussée
+Le serveur vérifie :
+Est-ce son tour ?
+        ↓
+       OUI
+        ↓
+A-t-il déjà pioché ?
+        ↓
+       NON
+        ↓
+Carte disponible ?
+        ↓
+       OUI
+        ↓
+Ajouter carte à sa main
+Puis :
+hasDrawn = true
+phase = DISCARD
+
+8. APRÈS LA PIOCHE : COMBINAISONS
+Le joueur peut regarder ses cartes.
+Par exemple ton écran montre :
+3♥ 4♥ 5♥
+
+7♥ 8♠ 9♠ 10♠ J♠
+
+Q♣ K♣
+
+2♦ 2♦ 2♦
+
+JOKER
+Il peut sélectionner des cartes et appuyer sur :
+🟢 POSER
+Le serveur analyse la combinaison.
+
+9. VALIDATION DES COMBINAISONS
+Il faut avoir un véritable CombinationValidator.
+Exemple 1 : suite
+7♠ 8♠ 9♠ 10♠ J♠
+Même couleur + valeurs consécutives :
+VALID
+Exemple 2 : groupe
+2♦ 2♣ 2♥
+Même valeur :
+VALID
+Exemple avec joker
+7♠ 8♠ JOKER 10♠
+Le joker représente :
+9♠
+Donc :
+VALID
+
+10. RÈGLE DES AS
+Ton moteur doit prévoir :
+A = 1
+et également :
+A = 14
+Donc le moteur doit pouvoir reconnaître par exemple :
+A-2-3
+et une combinaison où l'As fonctionne comme carte haute, selon tes règles précises.
+Je te conseille de mettre cette règle dans une fonction séparée :
+resolveAceValue()
+afin de ne pas mélanger la règle des AS avec le reste du moteur.
+
+11. DÉFAUSSE
+Après avoir pioché, le joueur doit pouvoir défausser.
+Il sélectionne :
+une carte
+puis :
+🔴 DÉFAUSSER
+Le serveur vérifie :
+currentPlayer = joueur ?
+        ↓
+       OUI
+
+hasDrawn = true ?
+        ↓
+       OUI
+
+carte appartient à sa main ?
+        ↓
+       OUI
+
+défausser
+        ↓
+passer au joueur suivant
+
+12. PASSAGE AU JOUEUR SUIVANT
+C'est ici que ton système devient très intéressant.
+Si :
+Raja = siège 1
+Miora = siège 2
+Solo = siège 3
+Tiana = siège 4
+alors :
+Raja
+ ↓
+Miora
+ ↓
+Solo
+ ↓
+Tiana
+ ↓
+Raja
+Toujours dans le sens des aiguilles d'une montre.
+Algorithme :
+nextSeat =
+(currentSeat + 1) % nombreDeJoueurs
+
+13. LE JOUEUR SUIVANT
+Miora reçoit le tour.
+Elle voit :
+TON TOUR
+30 secondes
+Elle peut :
+PIoche
+ou :
+Prendre la dernière carte défaussée
+Puis elle doit continuer le même cycle :
+PIOCHE
+   ↓
+REGARDE
+   ↓
+POSE éventuellement
+   ↓
+DÉFAUSSE
+   ↓
+JOUEUR SUIVANT
+
+14. SI LE JOUEUR NE JOUE PAS
+C'est très important pour ton application.
+Tu avais défini une règle de déconnexion/timeout.
+Par exemple :
+30 secondes
+Si le joueur ne fait rien :
+TIMER = 30
+ ↓
+29
+ ↓
+28
+ ↓
+...
+ ↓
+0
+Le serveur ne doit pas attendre indéfiniment.
+À 0 :
+AUTO PLAY
+Le serveur effectue automatiquement l'action prévue par tes règles.
+Par exemple :
+1. tirer automatiquement une carte
+2. la conserver temporairement
+3. choisir automatiquement une carte à défausser
+4. défausser
+5. passer le tour
+C'est le serveur qui fait cela.
+
+15. DÉCONNEXION INTERNET
+Exemple :
+Tiana joue et son Internet disparaît.
+Le téléphone indique :
+❌ Connexion perdue
+Mais le serveur ne doit pas immédiatement supprimer Tiana.
+Il fait :
+connected = false
+disconnectedAt = NOW
+Puis commence le délai de reconnexion.
+Par exemple :
+60 secondes
+Pendant ce temps :
+Tiana peut revenir
+Si elle revient :
+RECONNECT
+   ↓
+authentification
+   ↓
+retrouver gameId
+   ↓
+retrouver siège
+   ↓
+retrouver ses 13+ cartes
+   ↓
+continuer la partie
+
+16. SI LE JOUEUR NE REVIENT PAS
+Après le délai autorisé :
+60 secondes
+      ↓
+aucune reconnexion
+      ↓
+PLAYER_DISCONNECTED
+Le serveur décide selon les règles de la salle :
+Joueur éliminé / forfait
+ou, si tu souhaites le prévoir :
+BOT TEMPORAIRE
+Le point important est que la partie ne doit jamais rester bloquée parce qu'un téléphone a perdu Internet.
+
+17. CONDITION DE VICTOIRE
+Après chaque action importante, le serveur fait :
+checkWinner()
+Il vérifie notamment :
+tri-jokers ?
+quadri-jokers ?
+main entièrement posée ?
+combinaisons valides ?
+plus aucune carte à jouer ?
+Si un joueur satisfait la condition :
+GAME_STATUS = FINISHED
+et :
+winner = joueur
+
+18. FIN DE PARTIE
+Le serveur arrête immédiatement les actions de jeu :
+PLAYING
+   ↓
+FINISHED
+Puis il calcule le résultat.
+Exemple conceptuel :
+Mise totale
+      ↓
+Pot de la partie
+      ↓
+règles de la salle
+      ↓
+gain du gagnant
+      ↓
+bonus éventuel
+      ↓
+frais/commission autorisés
+Pour l'argent réel, cette partie devra être raccordée à ton système financier autorisé et aux règles réglementaires applicables à Madagascar.
+
+19. AFFICHAGE DU GAGNANT
+Ton application affiche :
+🏆 VICTOIRE !
+
+Tiana261
+
+GAGNANTE
+
+Gain :
++ 4 500 Ar
+Si quadri-jokers :
+👑 QUADRI-JOKERS !
+
+Bonus de salle :
++ XXX Ar
+Le serveur enregistre :
+game_id
+winner_id
+win_type
+stake
+bonus
+gain
+commission
+date
+
+20. NOUVELLE PARTIE
+Après quelques secondes :
+FINISHED
+   ↓
+RESULT
+   ↓
+NEW ROUND
+Et ta règle dit :
+Celui qui a gagné la dernière partie reçoit la première carte et commence la partie suivante.
+Donc :
+winner_previous_game
+        ↓
+starter_next_game
+Puis :
+nouveau mélange
+        ↓
+13 cartes chacun
+        ↓
+nouveau contrôle tri/quadri-jokers
+        ↓
+nouvelle partie
+
+21. QUAND TOUS LES JOUEURS QUITTENT LA TABLE
+Le serveur surveille :
+connectedPlayers
+Si :
+connectedPlayers = 0
+pendant le délai défini :
+GAME → CLOSED
+ROOM → WAITING
+Le serveur sauvegarde l'historique :
+Partie #874521
+Statut : terminée
+Gagnant : Tiana261
+Durée : 08:42
+Puis nettoie les données temporaires.
+
+22. L'ALGORITHME GLOBAL
+Voilà le cœur de ton RAMI 261 :
+┌─────────────────────┐
+│     SALLE D'ATTENTE │
+└──────────┬──────────┘
+           ↓
+     2 à 5 joueurs
+           ↓
+       DÉMARRAGE
+           ↓
+    CRÉER 108 CARTES
+           ↓
+        MÉLANGER
+           ↓
+ DISTRIBUER 13 CARTES
+    sens horaire
+           ↓
+ CONTRÔLE TRI/QUADRI
+           ↓
+    CHOISIR STARTER
+           ↓
+       ┌──────────┐
+       │  TOUR    │
+       └────┬─────┘
+            ↓
+        TIMER 15s
+            ↓
+      ┌─────┴─────┐
+      ↓           ↓
+    JOUE        TIMEOUT
+      ↓           ↓
+    PIOCHE     AUTO-PLAY
+      ↓           ↓
+  PIoche /     PIOCHE
+  défausse        ↓
+      ↓        DÉFAUSSE
+      ↓           ↓
+      └─────┬─────┘
+            ↓
+       POSER ?
+       ↓    ↓
+      OUI   NON
+       ↓     ↓
+   VALIDER   —
+       ↓
+  COMBINAISON
+    VALIDE ?
+       ↓
+       OUI
+       ↓
+ DÉFAUSSE
+       ↓
+CHECK WINNER
+       ↓
+   ┌───┴────┐
+   ↓        ↓
+NON       OUI
+   ↓        ↓
+NEXT     FINISH
+PLAYER      ↓
+   ↓      CALCUL
+   │       GAIN
+   │        ↓
+   │     HISTORIQUE
+   │        ↓
+   └──→ NOUVELLE PARTIE
+🔐 Et surtout : séparation téléphone / serveur
+Pour ton projet, je recommande cette architecture :
+          📱 Flutter
+              │
+              │ WebSocket / HTTPS
+              ▼
+       🖥️ SERVEUR RAMI 261
+              │
+      ┌───────┼────────┐
+      ↓       ↓        ↓
+   GAME     TIMER    AUTH
+ ENGINE              │
+      │              ↓
+      └──────────→ 🗄️ PostgreSQL
+                       │
+                       ↓
+                 💰 Transactions
+Le téléphone affiche le jeu. Le serveur décide du jeu.
+C'est particulièrement important pour ton projet, car avec des mises en argent réel, il faut empêcher qu'un joueur modifie son application pour dire par exemple « j'ai gagné » ou « j'ai reçu un Joker ».
+Et une précision importante : la prochaine étape n'est plus de créer seulement des écrans. Pour RAMI 261, il faut maintenant construire le Game Engine serveur, avec les états WAITING → STARTING → PLAYING → FINISHED → CLOSED, le système de tours, le timer, la reconnexion et la validation exacte des combinaisons. C'est le cœur technique de ton application.

@@ -2,6 +2,9 @@
 
 RewriteEngine On
 
+# Favicon - Rediriger favicon.ico vers favicon.php
+RewriteRule ^favicon\.ico$ favicon.php [L]
+
 # Réécriture des URLs
 RewriteRule ^game/([0-9]+)$ game.php?id=$1 [L,QSA]
 RewriteRule ^room/([A-Z0-9]{6})$ game.php?code=$1 [L,QSA]

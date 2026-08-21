@@ -1,0 +1,13 @@
+Algorithme du victoire
+Si le joueur n'a plus de cartes en main 
+Toutes les combinaisons sont-elles valides?
+OUI
+Le joueur gagne.
+Attribuer:
+	Argent
+	Points
+	Expérience
+	Historique
+	Classement
+Le gagnant commencera la manche suivante.
+FIN

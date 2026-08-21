@@ -1,0 +1,4 @@
+Algorithme du joker!
+Si une combinaison contient un Joker
+Le Joker prend automatiquement la valeur manquante.
+Valider ensuite la combinaison.

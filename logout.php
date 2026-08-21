@@ -1,5 +1,5 @@
 <?php
-// logout.php
+// logout.php - Déconnexion
 require_once 'includes/config.php';
 
 if (isset($_SESSION['user_id'])) {
@@ -22,5 +22,6 @@ if (ini_get("session.use_cookies")) {
 }
 
 // Rediriger vers l'accueil
-redirect('index.php');
+header('Location: index.php');
+exit;
 ?>

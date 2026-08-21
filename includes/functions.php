@@ -1,23 +1,39 @@
 <?php
 // includes/functions.php
 
-function sanitizeInput(string $input): string {
+function sanitizeInput($input) {
     return htmlspecialchars(strip_tags(trim($input)));
 }
 
-function generateToken(int $length = 32): string {
+function generateToken($length = 32) {
     return bin2hex(random_bytes($length));
 }
 
-function formatDate(string $date): string {
+function formatDate($date) {
     return date('d/m/Y H:i', strtotime($date));
 }
 
-function formatMoney(float $amount): string {
-    return number_format($amount, 2, ',', ' ') . ' €';
+// ============================================
+// FONCTION DE FORMATAGE ARIARY
+// ============================================
+function formatCurrency($amount) {
+    return number_format($amount, 0, ',', ' ') . ' Ar';
 }
 
-function getStatusBadge(string $status): string {
+function formatCurrencyShort($amount) {
+    if ($amount >= 1000000) {
+        return number_format($amount / 1000000, 1, ',', ' ') . ' M Ar';
+    } elseif ($amount >= 1000) {
+        return number_format($amount / 1000, 0, ',', ' ') . ' k Ar';
+    }
+    return number_format($amount, 0, ',', ' ') . ' Ar';
+}
+
+// ============================================
+// AUTRES FONCTIONS
+// ============================================
+
+function getStatusBadge($status) {
     $badges = [
         'waiting' => '<span class="badge badge-warning">⏳ En attente</span>',
         'playing' => '<span class="badge badge-success">🔄 En cours</span>',
@@ -27,7 +43,7 @@ function getStatusBadge(string $status): string {
     return $badges[$status] ?? '<span class="badge badge-secondary">' . $status . '</span>';
 }
 
-function getWinTypeLabel(string $type): string {
+function getWinTypeLabel($type) {
     $labels = [
         'normal' => 'Rami normal',
         'tri_joker' => '⭐ Triple Joker',
@@ -36,7 +52,7 @@ function getWinTypeLabel(string $type): string {
     return $labels[$type] ?? $type;
 }
 
-function getWinTypeIcon(string $type): string {
+function getWinTypeIcon($type) {
     $icons = [
         'normal' => '🎯',
         'tri_joker' => '⭐',
@@ -45,34 +61,19 @@ function getWinTypeIcon(string $type): string {
     return $icons[$type] ?? '🏆';
 }
 
-function getAvatarUrl(string $avatar): string {
-    return SITE_URL . 'assets/images/avatars/' . $avatar;
-}
-
-function getCardImageUrl(array $card): string {
-    if ($card['is_joker']) {
-        return SITE_URL . 'assets/images/cards/joker.png';
-    }
-    return SITE_URL . 'assets/images/cards/' . $card['suit'] . '/' . $card['value'] . '.png';
-}
-
-function isGameActive(string $status): bool {
+function isGameActive($status) {
     return in_array($status, ['waiting', 'playing']);
 }
 
-function canJoinGame(string $status): bool {
+function canJoinGame($status) {
     return $status === 'waiting';
 }
 
-function canStartGame(string $status, int $playerCount): bool {
+function canStartGame($status, $playerCount) {
     return $status === 'waiting' && $playerCount >= MIN_PLAYERS;
 }
 
-// ============================================
-// NOUVELLES FONCTIONS
-// ============================================
-
-function getSuitSymbol(string $suit): string {
+function getSuitSymbol($suit) {
     $symbols = [
         'hearts' => '♥',
         'diamonds' => '♦',
@@ -82,7 +83,7 @@ function getSuitSymbol(string $suit): string {
     return $symbols[$suit] ?? '⭐';
 }
 
-function getSuitColor(string $suit): string {
+function getSuitColor($suit) {
     $colors = [
         'hearts' => 'red',
         'diamonds' => 'red',
@@ -92,15 +93,13 @@ function getSuitColor(string $suit): string {
     return $colors[$suit] ?? 'purple';
 }
 
-function getCardDisplay(array $card): string {
-    if ($card['is_joker']) {
-        return '⭐ JOKER';
-    }
+function getCardDisplay($card) {
+    if ($card['is_joker']) return '⭐ JOKER';
     $symbol = getSuitSymbol($card['suit']);
     return $card['value'] . $symbol;
 }
 
-function calculateHandScore(array $hand): int {
+function calculateHandScore($hand) {
     $score = 0;
     foreach ($hand as $card) {
         if (!$card['is_joker']) {
@@ -110,24 +109,7 @@ function calculateHandScore(array $hand): int {
     return $score;
 }
 
-function calculateMeldScore(array $melds): int {
-    $score = 0;
-    foreach ($melds as $meld) {
-        foreach ($meld as $card) {
-            if (!$card['is_joker']) {
-                $score += $card['points'] ?? 0;
-            }
-        }
-    }
-    return $score;
-}
-
-function getWinRate(int $wins, int $games): float {
-    if ($games === 0) return 0;
-    return round(($wins / $games) * 100, 1);
-}
-
-function getStatusLabel(string $status): string {
+function getStatusLabel($status) {
     $labels = [
         'waiting' => '⏳ En attente',
         'playing' => '🔄 En cours',
@@ -137,20 +119,20 @@ function getStatusLabel(string $status): string {
     return $labels[$status] ?? $status;
 }
 
-function truncateText(string $text, int $length = 20): string {
+function truncateText($text, $length = 20) {
     if (strlen($text) <= $length) return $text;
     return substr($text, 0, $length) . '...';
 }
 
-function isValidUsername(string $username): bool {
+function isValidUsername($username) {
     return preg_match('/^[a-zA-Z0-9_]{3,30}$/', $username) === 1;
 }
 
-function isValidEmail(string $email): bool {
+function isValidEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
-function generateRoomCode(): string {
+function generateRoomCode() {
     $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     $code = '';
     for ($i = 0; $i < 6; $i++) {
@@ -159,14 +141,14 @@ function generateRoomCode(): string {
     return $code;
 }
 
-function isUserOnline(int $userId, PDO $pdo): bool {
+function isUserOnline($userId, $pdo) {
     $stmt = $pdo->prepare("SELECT is_online FROM users WHERE id = ?");
     $stmt->execute([$userId]);
     $result = $stmt->fetch();
     return $result ? (bool)$result['is_online'] : false;
 }
 
-function getPlayerCount(int $gameId, PDO $pdo): int {
+function getPlayerCount($gameId, $pdo) {
     $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM game_players WHERE game_id = ?");
     $stmt->execute([$gameId]);
     $result = $stmt->fetch();

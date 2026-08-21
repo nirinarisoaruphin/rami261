@@ -1,0 +1,2 @@
+Algorithme du Serveur:
+Connexion -> Créer salle -> Attendre joueurs -> Distribuer cartes -> Contrôler les tours -> Valider les combinaisons -> Calculer les gains -> Enregistrer la partie -> Nouvelle manche

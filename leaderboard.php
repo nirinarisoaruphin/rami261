@@ -53,6 +53,8 @@ $stats = $pdo->query("
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Classement - Rami 261</title>
+    <link rel="icon" href="favicon.php" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.php" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/cards.css">

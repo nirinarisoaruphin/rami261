@@ -1,0 +1,24 @@
+Algorithme 1 :
+DEBUT 	
+Créer une salle.
+Choisit l'option de mises : 500Ar, 2000Ar, 5000Ar, 10000Ar (VIP:50000Ar et plus)
+Donner les codes pour les joueurs, les amis, les invités pour participer dans le jeux.
+Attendre entre 2 et 5 joueurs.
+Lorsque tous les joueurs sont prêts:
+Créer le paquet de 108 cartes(52 cartes x2 plus 4 Jokers)
+Mélanger les cartes.
+Choisir le premier joueur:
+- Première manche: aléatoire.
+- Manches suivantes: gagnant précédent.
+Distribuer 13 cartes à chaque joueur dans le sens des aiguilles d'une montre.
+Vérifier les jokers.
+Si un joueur possède 4 jokers:
+"Victoire immédiate."
+"Donner le bonus spécial." 
+"Fin de la manche."
+Sinon si un joueur possède 3 jokers:
+"Victoire immédiate."
+"Fin de la manche."
+Sinon: 
+"Commencer la partie."
+FIN

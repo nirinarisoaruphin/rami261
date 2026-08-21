@@ -1,9 +1,8 @@
 <?php
-// register.php
+// register.php - Page d'inscription avec drapeau avant le titre
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
 
-// Si déjà connecté, rediriger vers l'accueil
 if (isLoggedIn()) {
     header('Location: index.php');
     exit;
@@ -15,14 +14,14 @@ $formData = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
-    $email = trim($_POST['email'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm = $_POST['confirm_password'] ?? '';
     $acceptTerms = isset($_POST['accept_terms']);
     
-    $formData = ['username' => $username, 'email' => $email];
+    $formData = ['username' => $username, 'phone' => $phone];
     
-    if (empty($username) || empty($email) || empty($password)) {
+    if (empty($username) || empty($phone) || empty($password)) {
         $error = 'Veuillez remplir tous les champs obligatoires';
     } elseif (strlen($username) < 3) {
         $error = 'Le nom d\'utilisateur doit faire au moins 3 caractères';
@@ -30,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Le nom d\'utilisateur ne doit pas dépasser 30 caractères';
     } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
         $error = 'Le nom d\'utilisateur ne peut contenir que des lettres, chiffres et underscores';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Adresse email invalide';
+    } elseif (!preg_match('/^(03[23478])\d{7}$/', $phone)) {
+        $error = 'Numéro de téléphone invalide. Format: 034, 032, 037, 038 ou 033 + 7 chiffres (ex: 0348072234)';
     } elseif (strlen($password) < 6) {
         $error = 'Le mot de passe doit faire au moins 6 caractères';
     } elseif ($password !== $confirm) {
@@ -39,15 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!$acceptTerms) {
         $error = 'Vous devez accepter les conditions d\'utilisation';
     } else {
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? OR username = ?");
-        $stmt->execute([$email, $username]);
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE phone = ? OR username = ?");
+        $stmt->execute([$phone, $username]);
         
         if ($stmt->fetch()) {
-            $error = 'Cet email ou nom d\'utilisateur est déjà utilisé';
+            $error = 'Ce numéro de téléphone ou nom d\'utilisateur est déjà utilisé';
         } else {
             $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password, balance, created_at) VALUES (?, ?, ?, 10.00, NOW())");
-            if ($stmt->execute([$username, $email, $hashed])) {
+            $stmt = $pdo->prepare("INSERT INTO users (username, phone, password, balance, created_at) VALUES (?, ?, ?, 10.00, NOW())");
+            if ($stmt->execute([$username, $phone, $hashed])) {
                 $success = 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
                 $formData = [];
             } else {
@@ -63,6 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Inscription - Rami 261</title>
+    
+    <link rel="icon" href="favicon.php" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.php" type="image/x-icon">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -75,8 +78,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <div class="relative z-10">
                 <div class="text-center mb-8">
-                    <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">🃏 Rami 261</h1>
-                    <p class="text-[var(--text-secondary)] text-sm mt-2">Créez votre compte</p>
+                    <!-- TITRE AVEC DRAPEAU AVANT -->
+                    <div class="flex items-center justify-center gap-3 mb-2">
+                        <div class="w-10 h-7 rounded overflow-hidden shadow-md flex-shrink-0 bg-white border border-gray-200">
+                            <img src="assets/images/flags/madagascar.png" alt="Drapeau Madagascar"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'">
+                        </div>
+                        <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                            RAMI 261
+                        </h1>
+                    </div>
+                    <p class="text-[var(--text-secondary)] text-sm mt-2">🇲🇬 Créez votre compte</p>
                 </div>
                 <div class="glass p-6 rounded-2xl">
                     <?php if ($error): ?>
@@ -95,17 +108,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="text" name="username" required value="<?php echo htmlspecialchars($formData['username'] ?? ''); ?>" class="w-full px-4 py-2 bg-white rounded-lg text-[var(--text-primary)] border border-[var(--border-glass)] focus:outline-none focus:border-[var(--accent-primary)]" placeholder="Votre pseudo" minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+">
                         </div>
                         <div>
-                            <label class="text-sm text-[var(--text-secondary)] block mb-1">📧 Email <span class="text-red-500">*</span></label>
-                            <input type="email" name="email" required value="<?php echo htmlspecialchars($formData['email'] ?? ''); ?>" class="w-full px-4 py-2 bg-white rounded-lg text-[var(--text-primary)] border border-[var(--border-glass)] focus:outline-none focus:border-[var(--accent-primary)]" placeholder="votre@email.com">
+                            <label class="text-sm text-[var(--text-secondary)] block mb-1">📱 Numéro de téléphone <span class="text-red-500">*</span></label>
+                            <input type="tel" name="phone" required value="<?php echo htmlspecialchars($formData['phone'] ?? ''); ?>" class="w-full px-4 py-2 bg-white rounded-lg text-[var(--text-primary)] border border-[var(--border-glass)] focus:outline-none focus:border-[var(--accent-primary)]" placeholder="034 07 223 34" maxlength="10">
+                            <p class="text-xs text-[var(--text-secondary)] mt-1">Format: 034, 032, 037, 038 ou 033 + 7 chiffres</p>
                         </div>
+                        
                         <div>
                             <label class="text-sm text-[var(--text-secondary)] block mb-1">🔒 Mot de passe <span class="text-red-500">*</span></label>
-                            <input type="password" name="password" required class="w-full px-4 py-2 bg-white rounded-lg text-[var(--text-primary)] border border-[var(--border-glass)] focus:outline-none focus:border-[var(--accent-primary)]" placeholder="Minimum 6 caractères" minlength="6">
+                            <div class="relative">
+                                <input type="password" name="password" id="registerPassword" required class="w-full px-4 py-2 bg-white rounded-lg text-[var(--text-primary)] border border-[var(--border-glass)] focus:outline-none focus:border-[var(--accent-primary)] pr-12" placeholder="Minimum 6 caractères" minlength="6">
+                                <button type="button" onclick="togglePassword('registerPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="registerPasswordIcon">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-xs text-[var(--text-secondary)] mt-1">Minimum 6 caractères</p>
                         </div>
+                        
                         <div>
-                            <label class="text-sm text-[var(--text-secondary)] block mb-1">✅ Confirmer <span class="text-red-500">*</span></label>
-                            <input type="password" name="confirm_password" required class="w-full px-4 py-2 bg-white rounded-lg text-[var(--text-primary)] border border-[var(--border-glass)] focus:outline-none focus:border-[var(--accent-primary)]" placeholder="Confirmez" minlength="6">
+                            <label class="text-sm text-[var(--text-secondary)] block mb-1">✅ Confirmer le mot de passe <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" name="confirm_password" id="registerConfirmPassword" required class="w-full px-4 py-2 bg-white rounded-lg text-[var(--text-primary)] border border-[var(--border-glass)] focus:outline-none focus:border-[var(--accent-primary)] pr-12" placeholder="Confirmez votre mot de passe" minlength="6">
+                                <button type="button" onclick="togglePassword('registerConfirmPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="registerConfirmPasswordIcon">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
+                        
                         <div class="flex items-start gap-2">
                             <input type="checkbox" name="accept_terms" id="accept_terms" required class="mt-1 accent-[var(--accent-primary)] w-4 h-4">
                             <label for="accept_terms" class="text-xs text-[var(--text-secondary)]">J'accepte les conditions d'utilisation</label>
@@ -118,5 +152,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </div>
+    
+    <script>
+        // AFFICHER/MASQUER LE MOT DE PASSE
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('svg');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"/>
+                `;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                `;
+            }
+        }
+        
+        // Formatage du numéro de téléphone
+        document.querySelector('input[name="phone"]')?.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+        });
+    </script>
 </body>
 </html>

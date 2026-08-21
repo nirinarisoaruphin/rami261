@@ -1,0 +1,3 @@
+Algorithme supplémentaires:
+Automate des étapes de la partie (au lieu de gérer le jeu avec des dizaines de conditions (if), chaque partie passe par un étape précis:
+ATTENTE -> DISTRIBUTION -> VERIFICATION DES 3/4 JOCKERS -> TOUR DU JOUEUR -> PIOCHE -> POSE DES COMBINAISONS -> DEFAUSSE -> JOUEUR SUIVANT -> VICTOI

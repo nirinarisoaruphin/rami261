@@ -1,0 +1,12 @@
+Algorithme de vérification d'une suit:
+Recevoir une liste de cartes
+Si moins de 3 cartes
+FAUX 
+Toutes les cartes sont-elles de la même couleur?
+NON
+	FAUX
+Les valeurs sont-elles consécutives?
+OUI
+	VRAI
+NON
+	FAUX
