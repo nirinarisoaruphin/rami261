@@ -1,0 +1,17 @@
+6 Gestion des timeouts et déconnexions :
+TIMEOUT (30s)
+    ↓
+AUTO-PLAY
+    ├── Pioche automatique
+    ├── Défausse automatique
+    └── Passer au joueur suivant
+    ↓
+DÉCONNEXION INTERNET
+    ↓
+connected = false
+    ↓
+DÉLAI DE RECONNEXION (60s)
+    ↓
+    ├── RECONNEXION → RESTAURER LA MAIN → CONTINUER
+    │
+    └── PAS DE RECONNEXION → FORFAIT (ou BOT)

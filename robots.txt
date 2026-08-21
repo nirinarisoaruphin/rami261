@@ -1,0 +1,18 @@
+# robots.txt
+User-agent: *
+Disallow: /includes/
+Disallow: /database/
+Disallow: /api/
+Disallow: /ajax/
+Disallow: /logs/
+
+# Autoriser l'indexation des pages principales
+Allow: /
+Allow: /index.php
+Allow: /game.php
+Allow: /leaderboard.php
+Allow: /rules.php
+Allow: /profile.php
+
+# Sitemap
+Sitemap: http://localhost/rami261/sitemap.xml

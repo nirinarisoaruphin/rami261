@@ -1,0 +1,22 @@
+2 Démarrage de le partie : WAITING (2 à 5 joueurs)
+    ↓
+DÉMARRER PARTIE
+    ↓
+CRÉER 108 CARTES
+    ├── 2 × 52 cartes standard
+    └── 4 Jokers
+    ↓
+MÉLANGER (MÉLANGE ALÉATOIRE)
+    ↓
+DISTRIBUER 13 CARTES (SENS HORAIRE)
+    ├── Joueur 1 → 13 cartes
+    ├── Joueur 2 → 13 cartes
+    ├── ...
+    └── Joueur N → 13 cartes
+    ↓
+VÉRIFICATION SPÉCIALE
+    ├── 3 Jokers → VICTOIRE IMMÉDIATE
+    ├── 4 Jokers → VICTOIRE IMMÉDIATE (Bonus salle)
+    └── Sinon → CONTINUER
+    ↓
+PLAYING

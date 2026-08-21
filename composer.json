@@ -1,0 +1,25 @@
+{
+    "name": "rami261/rami261",
+    "description": "Application de jeu de Rami 261 en ligne",
+    "type": "project",
+    "require": {
+        "php": ">=7.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rami261\\": "src/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "echo '✅ Installation terminée'"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

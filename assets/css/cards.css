@@ -1,0 +1,58 @@
+/* assets/css/cards.css - Styles additionnels pour les cartes */
+
+.card-container {
+    perspective: 600px;
+    display: inline-block;
+    margin: 4px;
+}
+
+.card-3d {
+    position: relative;
+    width: 70px;
+    height: 100px;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.card-3d.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-front {
+    transform: rotateY(180deg);
+}
+
+.card-back {
+    background: url('../images/cards/card-back.png');
+    background-size: cover;
+}
+
+@keyframes dealCard {
+    from { transform: translateY(-200px) rotate(30deg) scale(0.5); opacity: 0; }
+    to { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+}
+
+.card-deal {
+    animation: dealCard 0.4s ease-out forwards;
+}
+
+@keyframes selectCard {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-25px); }
+    100% { transform: translateY(-15px); }
+}
+
+.card-selected {
+    animation: selectCard 0.3s ease-out forwards;
+    border: 2px solid #7c3aed;
+    box-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
+}

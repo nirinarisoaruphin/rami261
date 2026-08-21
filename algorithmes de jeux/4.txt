@@ -1,0 +1,21 @@
+4- Validation de combinaison :
+JOUEUR → SÉLECTIONNE CARTES → APPUIE "POSER"
+    ↓
+SERVEUR : Combination Validator
+    ↓
+    ├── VALIDATION SUITE
+    │   ├── Même couleur?
+    │   ├── Valeurs consécutives?
+    │   └── Avec Joker (remplace valeur manquante)
+    │
+    ├── VALIDATION GROUPE
+    │   ├── Même valeur?
+    │   └── Avec Joker (remplace valeur manquante)
+    │
+    ├── RÈGLE DES AS
+    │   ├── A = 1 (A-2-3)
+    │   └── A = 14 (Q-K-A)
+    │
+    └── RÉSULTAT : VALIDE / INVALIDE
+    ↓
+VALIDÉ → CARTES RETIRÉES DE LA MAIN

@@ -1,0 +1,21 @@
+5 Défausse et fin de tour:
+JOUEUR → SÉLECTIONNE 1 CARTE → APPUIE "DÉFAUSSER"
+    ↓
+SERVEUR : VALIDATION
+    ├── hasDrawn = true?
+    ├── La carte est dans la main?
+    └── Défausse autorisée? → OUI
+    ↓
+AJOUTER LA CARTE À LA DÉFAUSSE
+    ↓
+VÉRIFICATION VICTOIRE
+    ↓
+    ├── MAIN VIDE? → GAGNANT
+    │
+    ├── TRI-JOKERS? → GAGNANT IMMÉDIAT
+    │
+    ├── QUADRI-JOKERS? → GAGNANT IMMÉDIAT (Bonus)
+    │
+    └── SINON → FIN DE TOUR
+    ↓
+PASSER AU JOUEUR SUIVANT (SENS HORAIRE)

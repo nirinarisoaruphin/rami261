@@ -1,0 +1,31 @@
+7 Fin de partir et calcul des gains :
+PLAYING
+    ↓
+CONDITION DE VICTOIRE ATTEINTE
+    ↓
+FINISHED
+    ↓
+CALCUL DES GAINS
+    ├── Pot total
+    ├── Mise du gagnant
+    ├── Bonus (ex: Quadri-Jokers)
+    ├── Commission légale
+    └── Gain net
+    ↓
+AFFICHAGE DU GAGNANT
+    ├── Nom du joueur
+    ├── Type de victoire
+    └── Montant gagné
+    ↓
+ENREGISTREMENT HISTORIQUE
+    ├── Game ID
+    ├── Gagnant ID
+    ├── Type de victoire
+    ├── Mise
+    ├── Bonus
+    ├── Commission
+    └── Date
+    ↓
+NOUVELLE PARTIE
+    ├── Gagnant = Starter
+    └── Retour à l'étape 2

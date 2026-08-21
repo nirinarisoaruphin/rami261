@@ -1,0 +1,10 @@
+Arriver du joueur:
+JOUEUR → APPUIE "JOUER"
+    ↓
+SERVEUR : VÉRIFICATIONS
+    ├── Vérifier compte & solde
+    ├── Salle disponible?
+    ├── Si OUI → Réserver place & mise
+    └── Envoyer état aux joueurs
+    ↓
+JOUEUR → SALLE D'ATTENTE (WAITING)

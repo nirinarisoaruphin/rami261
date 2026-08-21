@@ -1,0 +1,41 @@
+# .gitignore
+
+# Fichiers de configuration
+*.env
+*.local
+*.ini
+
+# Logs
+*.log
+/logs/
+
+# Cache
+*.cache
+*.tmp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Base de données
+*.sqlite
+*.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Projet spécifique
+logs/
+temp/
+uploads/

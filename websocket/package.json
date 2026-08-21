@@ -1,0 +1,17 @@
+{
+  "name": "rami261-websocket",
+  "version": "1.0.0",
+  "description": "Serveur WebSocket pour Rami 261",
+  "main": "websocket/server.js",
+  "scripts": {
+    "start": "node websocket/server.js",
+    "dev": "nodemon websocket/server.js"
+  },
+  "dependencies": {
+    "ws": "^8.14.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
